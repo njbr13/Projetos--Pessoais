@@ -114,7 +114,7 @@ bool validacao_cpf(char cpf[]){
     else if(resto2 < 10 && D2 != resto2){ 
         return false;
     }
-   
+   //push
     
     return true;
 
