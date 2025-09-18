@@ -59,8 +59,12 @@ bool validacao_email(char email[50]){
         }
         QTD_CARACTERES++;
     }
-
-    if(QTD_ARROBA != 1){
+    
+    if(QTD_CARACTERES < 3){
+        printf("Email deve ter no minimo 3 caracteres");
+        return false;
+    }
+    else if(QTD_ARROBA != 1){
         printf("O Email so pode ter um @.\n");
         return false;
     }else if(email[cont] == '@'){
@@ -77,10 +81,7 @@ bool validacao_email(char email[50]){
             return false;
         }
         else if(email[i] == '.'){
-            if(email[i + 1] == '.' || email[i - 1] == '.'){
-                printf("Nao pode ter ponto seguido depois no dominio.\n");
-                return false;
-            }else if(!isalpha(email[i + 1]) || !isalpha(email[i - 1])){
+            if(!isalpha(email[i + 1]) || !isalpha(email[i - 1])){
                 printf("Escreva um dominio valido\n");
                 return false;
             }else if(email[i + 1] == '\0'){
