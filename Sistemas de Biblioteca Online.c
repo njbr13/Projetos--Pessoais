@@ -3,7 +3,7 @@
 #include <strings.h>
 #include <ctype.h>
 #include <stdbool.h>
-
+#define QTQ_MAXIMA 100
 
 typedef struct{
     char nome[80];
@@ -99,26 +99,59 @@ bool validacao_email(char email[50]){
     return true;
 }
 
+int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
+        printf("Digite seu Nome:");
+        fgets(leitor[*QTD_LEITOR].nome,80,stdin);
+        leitor[*QTD_LEITOR].nome[strcspn(leitor[*QTD_LEITOR].nome, "\n")] = '\0';
+        
+        if(validacao_nome(leitor[*QTD_LEITOR].nome)){
+            printf("Nome Valido.");
+        }
+        else{
+            printf("Nome Inválido.Deseja tentar novamente?(S/N)");
+            char escolha;
+            scanf("%c", &escolha);
+            if(escolha == 'S'){
+                cadastro_leitor( leitor,QTD_LEITOR);
+            }else{
+                return 1;
+            }
+        }
+        (*QTD_LEITOR)++;
+        return 0;
+
+}
+
+void listar_usuario(Usuario leitor[]){
+    printf("Lista de todos o usuarios:");
+
+    for(int i = 0;i < 3;i++ );
+
+}
+
 
 int main(){
+    int QTD_LEITOR = 0;
     char usuario[20];
     int idade;
     char email[51];
 
-    /*printf("Digite seu Nome:");
+    printf("Digite seu Nome:");
     scanf("%s", usuario);
     getchar();
     validacao_nome(usuario);
 
-    printf("Digite sua Idade:");
+    cadastro_leitor(leitor,&QTD_LEITOR);
+
+    /*printf("Digite sua Idade:");
     scanf("%d", &idade);
     getchar();
-    validacao_idade(idade);*/
+    validacao_idade(idade);
 
     printf("Digite seu email:");
     scanf("%s",email);
     getchar();
-    validacao_email(email);
+    validacao_email(email);*/
 
     return 0;
 
