@@ -10,7 +10,7 @@ typedef struct{
     int idade;
     char email[51];
 }Usuario;
-Usuario leitor[20];
+Usuario leitor[QTQ_MAXIMA];
 
 
 
@@ -36,7 +36,8 @@ bool validacao_email(char email[50]){
     if(strlen(email) > 50){
         printf("Email muito grande.Maximo de 50 caracteres.\n");
         return false;
-    }else if(!isalnum(email[0]) && email[0] != '_'){
+    }
+    else if(!isalnum(email[0]) && email[0] != '_'){
         printf("O Email so pode comecar com caractere alfanumerico ou _.\n");
         return false;
     }
@@ -100,59 +101,189 @@ bool validacao_email(char email[50]){
 }
 
 int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
-        printf("Digite seu Nome:");
-        fgets(leitor[*QTD_LEITOR].nome,80,stdin);
-        leitor[*QTD_LEITOR].nome[strcspn(leitor[*QTD_LEITOR].nome, "\n")] = '\0';
+    char escolha;
+    int indice = *QTD_LEITOR;
+    int cont_nome = 0;
+    int cont_email = 0;
+    int cadastro_completo = 0;
+
+    // Parte do Nome
+    printf("Digite seu Nome:");
+    scanf("%s", leitor[indice].nome);
+    getchar();
         
-        if(validacao_nome(leitor[*QTD_LEITOR].nome)){
-            printf("Nome Valido.");
-        }
-        else{
-            printf("Nome Inválido.Deseja tentar novamente?(S/N)");
-            char escolha;
-            scanf("%c", &escolha);
+    if(!validacao_nome(leitor[indice].nome)){
+        printf("Nome Invalido.Deseja Tentar Novamente(S/N)?");
+        scanf("%c", &escolha);
+        getchar();
+        
+        do{
             if(escolha == 'S'){
-                cadastro_leitor( leitor,QTD_LEITOR);
-            }else{
-                return 1;
+                fgets(leitor[indice].nome,80,stdin);
+                leitor[indice].nome[strcspn(leitor[indice].nome, "\n")] = '\0';
+                cont_nome++;
+                if(cont_nome == 3){
+                    printf("Numero de Tentativas excedidas");
+                    break;
+                }
             }
-        }
-        (*QTD_LEITOR)++;
+            else{
+                cadastro_completo++;
+                break;
+            }
+        }while(!validacao_nome(leitor[indice].nome));
+        cont_nome = 0;
+    }
+       
+    // Parte da Idade
+    printf("Digite sua Idade:");
+    scanf("%d", &leitor[indice].idade);
+    getchar();
+
+    if(!validacao_idade(leitor[indice].idade)){
+        printf("Idade nao permitida,minima de 12 anos");
         return 0;
+    }
+
+    // Parte do Email
+    printf("Digite seu Email:");
+    fgets(leitor[indice].email,50, stdin);
+    leitor[indice].email[strcspn(leitor[indice].email, "\n")] = '\0';
+
+    if(!(validacao_email(leitor[indice].email))){
+        cadastro_completo++;
+        printf("Email Invalido.Deseja Tentar novamente(S/N)?");
+        scanf("%c", &escolha);
+        do{
+            if(escolha == 'S'){
+                fgets(leitor[indice].email,50, stdin);
+                leitor[indice].email[strcspn(leitor[indice].nome, "\n")] = '\0';
+                cont_email++;
+                if(cont_email == 3){
+                    printf("Numero de tentativas excedidas");
+                    break;
+                }
+            }else{
+                cadastro_completo++;
+                break;
+            }
+        }while(!validacao_email(leitor[indice].email));
+        cont_email = 0;
+    }
+
+    if(cadastro_completo == 1 || cadastro_completo == 2){
+        printf("O cadastro precisa ser completo.");
+        return false;
+    }
+    cadastro_completo = 0;
+    
+
+    (*QTD_LEITOR)++;
+    return 0;
 
 }
 
-void listar_usuario(Usuario leitor[]){
-    printf("Lista de todos o usuarios:");
+int alterar_cadastro(Usuario leitor[], int *QTD_LEITOR){
+        int indice = *QTD_LEITOR;
+        char alterar;
+        int cont_nome = 0,cont_email = 0;
 
-    for(int i = 0;i < 3;i++ );
+        printf("Deseja alterar qual Informacao?");
+        printf("1.Nome\n 2.Email\n");
+
+        scanf("%c", &alterar);
+
+        switch (alterar){
+        case 1:
+            do{
+                printf("Digite o novo Nome:");
+                fgets(leitor[indice].nome,80,stdin);
+                leitor[indice].nome[strcspn(leitor[indice].nome, "\n")] = '\0';
+                if(!validacao_nome(leitor[indice].nome)){
+                    printf("Nome Invalido");
+                    cont_nome++;
+                    if(cont_nome == 3){
+                        printf("Tentativas Excedidas");
+                        return 0;
+                    }
+                }
+            }while(!validacao_nome(leitor[indice].nome));
+            break;
+
+        case 2:
+        do{
+                printf("Digite o novo Email:");
+                fgets(leitor[indice].email,51,stdin);
+                leitor[indice].email[strcspn(leitor[indice].email, "\n")] = '\0';
+                if(!validacao_nome(leitor[indice].email)){
+                    printf("Email Invalido");
+                    cont_email++;
+                    if(cont_email == 3){
+                        printf("Tentativas Excedidas");
+                        return 0;
+                    }
+                }
+            }while(!validacao_nome(leitor[indice].email));
+            break;
+        
+        default:
+            break;
+        }
+      return 0;
+    }
+
+void listar_usuario(Usuario leitor[], int *QTD_LEITOR){
+    int indice = *QTD_LEITOR;
+    printf("Lista de todos o usuarios:\n");
+
+    for(int i = 0;i < indice;i++ ){
+        printf("Nome:%s\n", leitor[i].nome);
+        printf("Idade:%d", leitor[i].idade);
+        printf("\n");
+    }
 
 }
 
 
 int main(){
     int QTD_LEITOR = 0;
-    char usuario[20];
-    int idade;
-    char email[51];
+    int escolha;
 
-    printf("Digite seu Nome:");
-    scanf("%s", usuario);
-    getchar();
-    validacao_nome(usuario);
+   do{
+        printf("\n Bem Vindo a uma Biblioteca Online,projetada para voce leitor que deseja praticidade em organizar a sua leitura.\n Aqui vai algumas das opcoes para voce:\n 1.Cadastro de usuario \n 2.Alterar Cadastro \n 3.Listar Usuarios \n 4.Gerenciar Livros \n 5.Gerenciar Emprestimos \n 0.Sair \n");
+        printf("\n");
+        printf("Escolha uma das Opcoes acima:");
+        printf("\n");
+        scanf(" %d", &escolha);
 
-    cadastro_leitor(leitor,&QTD_LEITOR);
+        switch (escolha){
+            case 1:
+                cadastro_leitor(leitor, &QTD_LEITOR);
+                break;
+    
+            case 2:
+                alterar_cadastro(leitor, &QTD_LEITOR);
+                break;
+        
+            case 3:
+                listar_usuario(leitor, &QTD_LEITOR);
+                break;
 
-    /*printf("Digite sua Idade:");
-    scanf("%d", &idade);
-    getchar();
-    validacao_idade(idade);
-
-    printf("Digite seu email:");
-    scanf("%s",email);
-    getchar();
-    validacao_email(email);*/
-
-    return 0;
-
+            case 4:
+                printf("Ainda em processo de construcao");
+                break;
+    
+            case 5:
+                printf("Ainda em processo de construcao");
+                break;
+            
+            case 0:
+             
+                return 0;
+                break;
+            
+            default:
+                break;
+        }
+    }while(escolha != 0);
 }
