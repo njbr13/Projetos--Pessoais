@@ -67,7 +67,7 @@ bool validacao_email(char email[50]){
     else if(QTD_ARROBA != 1){
         printf("O Email so pode ter um @.\n");
         return false;
-    }else if(email[cont] == '@'){/
+    }else if(email[cont] == '@'){
         if(!isalnum(email[cont + 1]) || !isalnum(email[cont - 1])){
             printf("Antes e Depois do @ so pode conter caracteres alfanumericos.\n");
             return false;

@@ -82,12 +82,27 @@ bool validacao_email(char email[50]){
 
 int main(){
 
-    fgets(leitor[0].email,50,stdin);
-    leitor[0].email[strcspn(leitor[0].email, "\n")] = '\0';
+    int indice = 4;
+    int cont = 0;
 
-    if(!validacao_email(leitor[0].email)){
+    /*(if(!validacao_email(leitor[0].email)){
         printf("\nEmail invalido.");
+    }*/
+
+    for(int i = 0;i <= indice;i++){
+        scanf("%s", leitor[i].nome);
+        getchar();
+            
+     }
+
+    while(cont < indice){
+        if(strcmp(leitor[cont].nome, leitor[cont+1].nome) == 0){
+             printf("Igual");
+        cont++;
+        }
+    }
+            
+        return 0;
     }
 
-    return 0;
-}
+   

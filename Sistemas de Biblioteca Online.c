@@ -12,6 +12,13 @@ typedef struct{
 }Usuario;
 Usuario leitor[QTQ_MAXIMA];
 
+typedef struct{
+    char titulo[3777];
+    char autor[100];
+    int ano_de_publicacao;
+}Livro;
+Livro livro[QTQ_MAXIMA];
+
 
 
 
@@ -107,10 +114,27 @@ int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
     int cont_email = 0;
     int cadastro_completo = 0;
 
+    printf("Cadastro do Usuario %d.\n", indice+1);
+
     // Parte do Nome
-    printf("Digite seu Nome:");
+    printf("Digite seu Nome(sem espacos):");
     scanf("%s", leitor[indice].nome);
     getchar();
+
+   for(int i = 0;i < indice;i++){
+        if(strcmp(leitor[i].nome, leitor[indice].nome) == 0){
+            printf("Este Nome ja existe.Tente Novamente.\n");
+            printf("Digite seu Nome:");
+            fgets(leitor[indice].nome,50, stdin);
+            leitor[indice].nome[strcspn(leitor[indice].nome, "\n")] = '\0';
+            cont_nome++;
+        }else if(cont_nome == (indice - i)){
+            printf("Tentativas Excedidas.");
+            return false;
+        }
+    }
+    cont_nome = 0;
+
         
     if(!validacao_nome(leitor[indice].nome)){
         printf("Nome Invalido.Deseja Tentar Novamente(S/N)?");
@@ -123,7 +147,7 @@ int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
                 leitor[indice].nome[strcspn(leitor[indice].nome, "\n")] = '\0';
                 cont_nome++;
                 if(cont_nome == 3){
-                    printf("Numero de Tentativas excedidas");
+                    printf("Numero de Tentativas excedidas.");
                     break;
                 }
             }
@@ -141,7 +165,6 @@ int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
     getchar();
 
     if(!validacao_idade(leitor[indice].idade)){
-        printf("Idade nao permitida,minima de 12 anos");
         return 0;
     }
 
@@ -149,6 +172,21 @@ int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
     printf("Digite seu Email:");
     fgets(leitor[indice].email,50, stdin);
     leitor[indice].email[strcspn(leitor[indice].email, "\n")] = '\0';
+
+    for(int i = 0;i < indice;i++){
+        if(strcmp(leitor[i].email, leitor[indice].email) == 0){
+            printf("Este Email ja existe.Tente Novamente.\n");
+            printf("Digite seu Email:");
+            fgets(leitor[indice].email,50, stdin);
+            leitor[indice].email[strcspn(leitor[indice].email, "\n")] = '\0';
+            cont_email++;
+        }else if(cont_email == (indice-i)){
+            printf("Tentativas Excedidas.");
+            return false;
+        }
+    }
+
+    cont_email = 0;
 
     if(!(validacao_email(leitor[indice].email))){
         cadastro_completo++;
@@ -185,27 +223,31 @@ int cadastro_leitor(Usuario leitor[], int *QTD_LEITOR){
 
 int alterar_cadastro(Usuario leitor[], int *QTD_LEITOR){
         int indice = *QTD_LEITOR;
-        char alterar;
+        int alterar;
         int cont_nome = 0,cont_email = 0;
 
         printf("Deseja alterar qual Informacao?");
         printf("1.Nome\n 2.Email\n");
 
-        scanf("%c", &alterar);
+        scanf("%d", &alterar);
 
         switch (alterar){
         case 1:
             do{
                 printf("Digite o novo Nome:");
-                fgets(leitor[indice].nome,80,stdin);
-                leitor[indice].nome[strcspn(leitor[indice].nome, "\n")] = '\0';
+                scanf("%s", leitor[indice].nome);
+                getchar();
+
                 if(!validacao_nome(leitor[indice].nome)){
                     printf("Nome Invalido");
-                    cont_nome++;
                     if(cont_nome == 3){
                         printf("Tentativas Excedidas");
                         return 0;
                     }
+                    cont_nome++;
+                }else{
+                    printf("Nome alterado com Sucesso");
+                    strcpy(leitor[indice].nome, leitor[indice].nome);
                 }
             }while(!validacao_nome(leitor[indice].nome));
             break;
@@ -222,6 +264,8 @@ int alterar_cadastro(Usuario leitor[], int *QTD_LEITOR){
                         printf("Tentativas Excedidas");
                         return 0;
                     }
+                }else{
+                    printf("Email alterado com Sucesso.");
                 }
             }while(!validacao_nome(leitor[indice].email));
             break;
@@ -229,6 +273,13 @@ int alterar_cadastro(Usuario leitor[], int *QTD_LEITOR){
         default:
             break;
         }
+
+        printf("Dados alterados com sucesso:\n");
+        printf("Nome:%s\n", leitor[indice].nome);
+        printf("Idade:%d\n", leitor[indice].idade);
+        printf("Email:%s", leitor[indice].email);
+        printf("\n");
+
       return 0;
     }
 
@@ -238,9 +289,66 @@ void listar_usuario(Usuario leitor[], int *QTD_LEITOR){
 
     for(int i = 0;i < indice;i++ ){
         printf("Nome:%s\n", leitor[i].nome);
-        printf("Idade:%d", leitor[i].idade);
+        printf("Idade:%d\n", leitor[i].idade);
+        printf("Email:%s", leitor[i].email);
         printf("\n");
     }
+
+}
+
+void Gerenciar_Livros(Livro livro[], Usuario leitor[], int *QTQ_LEITOR){
+    char escolha;
+    int indice = *QTQ_LEITOR;
+    int cont_data = 0;
+
+    printf("Deseja Adicionar um Livro?(S/N)?");
+    scanf("%s", &escolha);
+
+    printf("Escreva as informacoes do Livro que deseja atualizar(Titulo, Autor e Ano de Publicacao):\n");
+    printf("Titulo:");
+    fgets(livro[indice].titulo, 3777, stdin);
+    livro[indice].titulo[strcspn(livro[indice].titulo, "\n")] = '\0';
+
+    printf("Autor:");
+    fgets(livro[indice].autor, 100, stdin);
+    livro[indice].autor[strcspn(livro[indice].autor, "\n")] = '\0';
+    printf("Ano Publicacao:");
+
+    scanf("%d", &livro[indice].ano_de_publicacao);
+    getchar();
+
+    //Validações das leituras acima
+
+    do{
+        if(livro[indice].ano_de_publicacao < 1500){
+            printf("O ano do Livro deve ser entre 1500 e o atual.");
+            scanf("%d", &livro[indice].ano_de_publicacao);
+            getchar();
+            cont_data++;
+                if(cont_data == 3){
+                    printf("Numero de Tentativas de Excedidas.");
+                    return 0;
+                }
+        }
+    }while(cont_data == 3);
+
+    int cont_titulo = 0;
+    for(int i = 0;i < livro[indice].titulo[i] != '\0';i++){
+        if(isalnum(livro[indice].titulo[i])){
+            cont_titulo++;
+        }
+    }
+
+    if(cont_titulo == 0){
+        printf("Preencha o titulo:");
+        do{
+            fgets(livro[indice].titulo, 3777, stdin);
+            livro[indice].titulo[strcspn(livro[indice].titulo, "\n")] = '\0';
+
+        }while(cont_titulo == 3);
+        return false;
+    }
+
 
 }
 
@@ -250,11 +358,12 @@ int main(){
     int escolha;
 
    do{
-        printf("\n Bem Vindo a uma Biblioteca Online,projetada para voce leitor que deseja praticidade em organizar a sua leitura.\n Aqui vai algumas das opcoes para voce:\n 1.Cadastro de usuario \n 2.Alterar Cadastro \n 3.Listar Usuarios \n 4.Gerenciar Livros \n 5.Gerenciar Emprestimos \n 0.Sair \n");
+        printf("\n");
+        printf("\nBem Vindo a uma Biblioteca Online,projetada para voce leitor que deseja praticidade em organizar a sua leitura.\n Aqui vai algumas das opcoes para voce:\n 1.Cadastro de usuario \n 2.Alterar Cadastro \n 3.Listar Usuarios \n 4.Gerenciar Livros \n 5.Gerenciar Emprestimos \n 0.Sair \n");
         printf("\n");
         printf("Escolha uma das Opcoes acima:");
-        printf("\n");
         scanf(" %d", &escolha);
+        printf("\n");
 
         switch (escolha){
             case 1:
@@ -286,4 +395,6 @@ int main(){
                 break;
         }
     }while(escolha != 0);
+
+    return 0;
 }
